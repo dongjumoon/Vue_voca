@@ -1,7 +1,7 @@
 <template>
     <div id="app">
-        <router-link class="link" to="/main">Main</router-link>
-        <router-link class="link" to="/login">Login</router-link>
+        <router-link class="link" to="/main">Main voca</router-link>
+        <router-link class="link" to="/login">Login voca</router-link>
         <router-view></router-view>
     </div>
 </template>
