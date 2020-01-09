@@ -8,15 +8,21 @@ Vue.use(VueRouter)
 export const router = new VueRouter({
     routes: [
         {
-            path: '/main',
+            path: '/quiz',
             component: {
-                template: '<div>main</div>'
+                template: '<div>quiz</div>'
             }
         },
         {
-            path: '/login',
+            path: '/addWord',
             component: {
-                template: '<div>login</div>'
+                template: '<div>addWord</div>'
+            }
+        },
+        {
+            path: '/wordList',
+            component: {
+                template: '<div>wordList</div>'
             }
         }
     ]
