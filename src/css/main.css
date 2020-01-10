@@ -108,3 +108,31 @@ a {
     width: 200px;
     padding: 5px;
 }
+.word-list-box {
+    width: 60%;
+    min-width: 300px;
+    max-width: 800px;
+    margin: auto;
+}
+.word-list {
+    margin: auto;
+    overflow: auto;
+}
+.word-list > li {
+    font-size: 50px;
+    white-space: nowrap;
+}
+.toggle-btn-area {
+    overflow: hidden;
+}
+.viewer-toggle {
+    float: right;
+    padding: 5px;
+    margin: 25px 10px;
+}
+
+@media (max-width: 1024px) {
+    .word-list > li {
+        font-size: 35px;
+    }
+}
