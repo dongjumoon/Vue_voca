@@ -14,7 +14,6 @@ a {
     display: none;
 }
 
-
 .title {
     text-align: center;
     line-height: 200px;
@@ -51,4 +50,89 @@ a {
     position: absolute;
     width: 100%;
     height: 100%;
+}
+.header {
+    position: relative;
+    border-bottom: 1px solid #eee;
+}
+.page-title {
+    text-align: center;
+    padding: 20px 0;
+    box-shadow: 0 -2px 5px 5px #eee;
+}
+.go-back-btn {
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 5px 8px;
+}
+.go-back-btn span::before {
+    content: '<';
+}
+.question {
+    position: relative;
+    padding: 10px 15px;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    min-height: 200px;
+    width: 50%;
+    min-width: 300px;
+    max-width: 600px;
+    margin: 50px auto;
+}
+.question-input {
+    display: block;
+    resize: none;
+    outline: none;
+}
+.question-num {
+    position: absolute;
+    right: 0;
+    bottom: -30px;
+}
+.answer {
+    display: block;
+    margin: 0 auto 20px;
+    width: 200px;
+    padding: 5px;
+}
+.answer-add {
+    margin-top: 50px;
+}
+.submit-btn {
+    display: block;
+    margin: auto;
+    width: 200px;
+    padding: 5px;
+}
+.word-list-box {
+    width: 60%;
+    min-width: 300px;
+    max-width: 800px;
+    margin: auto;
+}
+.word-list {
+    margin: auto;
+    overflow: auto;
+}
+.word-list > li {
+    font-size: 50px;
+    white-space: nowrap;
+}
+.toggle-btn-area {
+    overflow: hidden;
+}
+.viewer-toggle {
+    float: right;
+    padding: 5px;
+    margin: 25px 10px;
+}
+
+@media (max-width: 1024px) {
+    .word-list > li {
+        font-size: 35px;
+    }
 }
