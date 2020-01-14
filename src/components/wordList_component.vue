@@ -34,12 +34,14 @@
                         </span>
                     </paginate>
                 </nav>
+                <button v-on:click="serverTest">서버확인버튼</button>
             </section>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
         data: function() {
             return {
@@ -54,6 +56,11 @@
         methods: {
             getWords: function(pageNum) {
                 this.$emit('paging', pageNum);
+            },
+            serverTest: function() {
+                axios.get('http://localhost:8088/word-db-server/insert?word=server17&description=testserver17')
+                    .then(()=>{console.log('성공')})
+                    .catch(()=>{console.log('실패')});
             }
         }
     }
