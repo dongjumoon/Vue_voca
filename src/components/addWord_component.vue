@@ -33,6 +33,23 @@
         },
         methods: {
             addWord: function() {
+                axios.get('/insert', {
+                        params: {
+                            word: this.answer,
+                            description: this.question
+                        }
+                     })
+                     .then(()=>{
+                          alert('단어가 저장되었습니다.');
+                          this.clearInputBoxes();
+                     })
+                     .catch(()=>{
+                         console.log('단어 저장 실패')
+                     })
+            },
+            clearInputBoxes: function() {
+                this.answer = '';
+                this.question = '';
             }
         }
     }
