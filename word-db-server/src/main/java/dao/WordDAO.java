@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -13,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 
+import enums.ResultMessage;
 import model.Word;
 
 public class WordDAO {
@@ -34,7 +37,7 @@ public class WordDAO {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	public int insert(Word word) {
+	public Map<ResultMessage, String> insert(Word word) {
 		int result = 0;
 		
 		if (!isHaveWord(word.getWord())) {
@@ -55,12 +58,29 @@ public class WordDAO {
 			});
 		}
 		
-		return result; // 저장 완료=1, 이미 있는 단어=0
+		if (result == 1) {
+			return getEnumMap(ResultMessage.SUCCESS);
+		} else {
+			return getEnumMap(ResultMessage.OVERLAP);
+		}
 	}
 
 	public List<Word> selectAll() {
-		List<Word> results = jdbcTemplate.query("select * from WORDS",
+		List<Word> results = jdbcTemplate.query("select * from WORDS order by word",
 				wordRowMapper);
+		return results;
+	}
+
+	public List<Word> getPage(String pageNum, String onePageViewCount) {
+		int printCount = Integer.parseInt(onePageViewCount);
+		int start = (Integer.parseInt(pageNum) - 1) * printCount;
+
+		List<Word> results = jdbcTemplate.query(
+					"select * "
+				  + "from WORDS "
+				  + "order by word "
+				  + "limit ?, ?",
+				wordRowMapper, start, printCount);
 		return results;
 	}
 	
@@ -70,7 +90,7 @@ public class WordDAO {
 		return words;
 	}
 	
-	public int rightWordReader(Word word) {
+	public Map<ResultMessage, String> rightWordReader(Word word) {
 		int result = 0;
 		
 		Word dbWord = selectByWord(word.getWord());
@@ -78,7 +98,11 @@ public class WordDAO {
 			result = 1;
 		}
 		
-		return result; // 정답=1, 뭔가 잘못되었다=0
+		if (result == 1) {
+			return getEnumMap(ResultMessage.SUCCESS);
+		} else {
+			return getEnumMap(ResultMessage.MISSING_WORD);
+		}
 	}
 	
 	public Word selectByWord(String word) {
@@ -92,7 +116,7 @@ public class WordDAO {
 		return selectByWord(word) != null ? true : false;
 	}
 	
-	public int update(Word word) {
+	public Map<ResultMessage, String> update(Word word) {
 		int result = 0;
 		
 		if (isHaveWord(word.getWord())) {
@@ -101,7 +125,24 @@ public class WordDAO {
 					word.getDescription(), word.getWord());
 		}
 		
-		return result; // 수정 완료=1, 존재 하지 않는 단어=0
+		if (result == 1) {
+			return getEnumMap(ResultMessage.SUCCESS);
+		} else {
+			return getEnumMap(ResultMessage.FAIL);
+		}
+		
+	}
+	
+	private Map<ResultMessage, String> getEnumMap(ResultMessage resultMessage) {
+		Map<ResultMessage, String> map = new HashMap<>();
+		map.put(resultMessage, resultMessage.getMessage());
+		return map;
+	}
+	
+	public int maxPage(String onePageViewCount) {
+		Integer count = jdbcTemplate.queryForObject(
+				"select count(*) from words", Integer.class);
+		return (count - 1) / Integer.parseInt(onePageViewCount) + 1;
 	}
 		
 }

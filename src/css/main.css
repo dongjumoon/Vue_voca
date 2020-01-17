@@ -131,6 +131,16 @@ a {
     margin: 25px 10px;
 }
 
+.box-answer-add {
+    position: relative;
+}
+
+.box-answer-add button {
+    position: absolute;
+    top: 0;
+    left: calc(50% + 100px);
+}
+
 @media (max-width: 1024px) {
     .word-list > li {
         font-size: 35px;

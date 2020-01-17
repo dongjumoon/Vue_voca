@@ -10,9 +10,12 @@
                 </a>
             </header>
             <section>
-                <input v-model="answer" class="answer answer-add" type="text" placeholder="정답 입력">
+                <div class="box-answer-add">
+                    <input v-model="answer" class="answer answer-add" type="text" placeholder="정답 입력">
+                    <button v-on:click="isHaveWord">중복검사</button>
+                </div>
                 <div>
-                    <textarea v-model="question" class="question question-input"></textarea>
+                    <textarea v-model="question" class="question question-input" v-on:keypress="lengthTest"></textarea>
                 </div>
                 <div>
                     <button class="submit-btn" v-on:click="addWord">입력하기</button>
@@ -33,23 +36,52 @@
         },
         methods: {
             addWord: function() {
-                axios.get('/insert', {
+                if (this.answer.length > 0) {
+                    axios.get('/insert', {
                         params: {
                             word: this.answer,
                             description: this.question
                         }
-                     })
-                     .then(()=>{
-                          alert('단어가 저장되었습니다.');
-                          this.clearInputBoxes();
-                     })
-                     .catch(()=>{
-                         console.log('단어 저장 실패')
-                     })
+                    })
+                        .then((res) => {
+                            let isSuccess = this.$emit('isSuccess', res.data);
+                            if (isSuccess) {
+                                this.clearInputBoxes();
+                            }
+                        })
+                        .catch(() => {
+                            alert('단어 저장 실패');
+                        })
+                } else {
+                    alert('단어를 입력해주세요');
+                }
             },
             clearInputBoxes: function() {
                 this.answer = '';
                 this.question = '';
+            },
+            lengthTest: function(event) {
+                if (this.question.length > 300) {
+                    alert('설명은 300자를 초과할 수 없습니다.');
+                    event.preventDefault();
+                }
+            },
+            isHaveWord: function() {
+                if (this.answer.length > 0) {
+                    axios.get('/isHaveWord?word=' + this.answer)
+                        .then((res)=>{
+                            if (res.data) {
+                                alert('이미 등록된 단어입니다.')
+                            } else {
+                                alert('등록 가능한 단어입니다.')
+                            }
+                        })
+                        .catch(()=>{
+                            alert('서버 접근에 실패하였습니다.');
+                        })
+                } else {
+                    alert('단어를 입력해주세요');
+                }
             }
         }
     }

@@ -17,9 +17,9 @@
                     <li v-for="(value, index) in words" v-bind:key="value.word">{{ value.word }}</li>
                 </ul>
                 <nav>
-                    <paginate v-if="viewerMode"
-                            :page-count="Number(maxPage)"
-                            :click-handler="getWords"
+                    <paginate v-if="isPaginationMode"
+                            :page-count="maxPage"
+                            :click-handler="getPage"
                             :prev-text="'Prev'"
                             :next-text="'Next'"
                             :container-class="'pagination'">
@@ -44,16 +44,43 @@
         data: function() {
             return {
                 pageTitle: '단어 목록보기',
-                viewerMode: true,
+                words: [],
+                onePageViewCount: 5,
+                isPaginationMode: true,
+                maxPage: 1,
             }
         },
-        props: ['words', 'maxPage'],
         created: function() {
-            this.$emit('paging', 1);
+            this.getPage(1);
+
+            let thisComp = this;
+            axios.get('/maxPage', {
+                    params: {
+                        onePageViewCount: this.onePageViewCount
+                    }
+                })
+                .then((res)=>{
+                    thisComp.maxPage = res.data;
+                })
+                .catch(()=>{
+                    alert('단어장(서버)을 불러오는데 실패하였습니다.');
+                })
         },
         methods: {
-            getWords: function(pageNum) {
-                this.$emit('paging', pageNum);
+            getPage: function(pageNum) {
+                let thisComp = this;
+                axios.get('/getPage', {
+                        params: {
+                            pageNum: pageNum,
+                            onePageViewCount: this.onePageViewCount
+                        }
+                    })
+                    .then((res)=>{
+                        thisComp.words = res.data;
+                    })
+                    .catch(()=>{
+                        alert('단어장(서버)을 불러오는데 실패하였습니다.');
+                    })
             }
         }
     }
