@@ -20,17 +20,48 @@ public class MainController {
 	WordDAO wordDao;
 	
 	@GetMapping("/insert")
-	public String test(@RequestParam String word, @RequestParam String description){
+	@ResponseBody
+	public int insert(@RequestParam String word, @RequestParam String description){
 		Word wordDto = new Word();
 		wordDto.setWord(word);
 		wordDto.setDescription(description);
-    	wordDao.insert(wordDto);
-    	return "hello";
+    	return wordDao.insert(wordDto);
     }
 	
 	@GetMapping("/selectAll")
 	@ResponseBody
-	public List<Word> test2() {
+	public List<Word> selectAll() {
 		return wordDao.selectAll();
 	}
+	
+	@GetMapping("quizList")
+	@ResponseBody
+	public List<Word> quizList() {
+		return wordDao.quizList();
+	}
+	
+	@GetMapping("/rightWordReader")
+	@ResponseBody
+	public int rightWordReader(@RequestParam String word, @RequestParam String description){
+		Word wordDto = new Word();
+		wordDto.setWord(word);
+		wordDto.setDescription(description);
+    	return wordDao.rightWordReader(wordDto);
+    }
+	
+	@GetMapping("/isHaveWord")
+	@ResponseBody
+	public int haveWord(@RequestParam String word){
+    	return wordDao.isHaveWord(word) ? 1 : 0;
+    }
+	
+	@GetMapping("/update")
+	@ResponseBody
+	public int update(@RequestParam String word, @RequestParam String description){
+		Word wordDto = new Word();
+		wordDto.setWord(word);
+		wordDto.setDescription(description);
+    	return wordDao.update(wordDto);
+    }
+	
 }
