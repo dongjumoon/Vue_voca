@@ -14,7 +14,9 @@
             </div>
             <section>
                 <ul class="word-list">
-                    <li v-for="(value, index) in words" v-bind:key="value.word">{{ value.word }}</li>
+                    <li v-for="(value, index) in words" v-bind:key="value.word">
+                        <span v-on:click="showWord(value, index)">{{ value.word }}</span>
+                    </li>
                 </ul>
                 <nav>
                     <paginate v-if="isPaginationMode"
@@ -36,10 +38,30 @@
                 </nav>
             </section>
         </div>
+
+        <modal v-if="showModal">
+            <h3 slot="header">{{ viewWord }}</h3>
+            <div slot="body">
+                <div v-if="!isEditMode">
+                    {{ viewDescription }}
+                </div>
+                <div v-else>
+                    <textarea class="edit-textarea" v-focus v-model="editDescription"></textarea>
+                </div>
+            </div>
+            <div slot="footer" class="two-btn-box">
+                <div v-if="!isEditMode" v-on:click="editModeOn">수정</div>
+                <div v-else             v-on:click="submit"           >저장</div>
+
+                <div v-if="!isEditMode" v-on:click="showModal = false">닫기</div>
+                <div v-else             v-on:click="isEditMode = false">취소</div>
+            </div>
+        </modal>
     </div>
 </template>
 
 <script>
+    import Modal from './common/Modal.vue'
     export default {
         data: function() {
             return {
@@ -48,6 +70,12 @@
                 onePageViewCount: 5,
                 isPaginationMode: true,
                 maxPage: 1,
+                showModal: false,
+                viewWord: '',
+                viewDescription: '',
+                viewIndex: -1,
+                isEditMode: false,
+                editDescription: '',
             }
         },
         created: function() {
@@ -81,6 +109,49 @@
                     .catch(()=>{
                         alert('단어장(서버)을 불러오는데 실패하였습니다.');
                     })
+            },
+            showWord: function(word, index) {
+                this.viewWord = word.word;
+                this.viewDescription = word.description;
+                this.viewIndex = index;
+                this.showModal = true;
+            },
+            submit: function() {
+                let thisComp = this;
+                axios.get('/update', {
+                        params: {
+                            word: this.viewWord,
+                            description: this.editDescription,
+                        }
+                    })
+                    .then((res)=>{
+                        let isSuccess = this.$emit('isSuccess', res.data);
+                        if (isSuccess) {
+                            thisComp.isEditMode = false;
+                            thisComp.words.splice(thisComp.viewIndex, 1, {
+                                word: thisComp.viewWord,
+                                description: thisComp.editDescription,
+                            })
+                            thisComp.viewDescription = thisComp.editDescription;
+                        }
+                    })
+                    .catch(()=>{
+                        alert('서버 오류: 단어 수정 실패');
+                    })
+            },
+            editModeOn: function() {
+                this.editDescription = this.viewDescription;
+                this.isEditMode = true;
+            }
+        },
+        components: {
+            modal: Modal
+        },
+        directives: {
+            focus: {
+                inserted: function(el) {
+                    el.focus();
+                }
             }
         }
     }
