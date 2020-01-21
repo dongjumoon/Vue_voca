@@ -84,10 +84,14 @@ public class WordDAO {
 		return results;
 	}
 	
-	public List<Word> quizList() {
+	public List<Word> quizList(String totalQuizNumber) {
 		List<Word> words = selectAll();
 		Collections.shuffle(words);
-		return words;
+		
+		int quizNum = Integer.parseInt(totalQuizNumber);
+		quizNum = words.size() < quizNum ? words.size() : quizNum;
+		
+		return words.subList(0, quizNum);
 	}
 	
 	public Map<ResultMessage, String> rightWordReader(Word word) {

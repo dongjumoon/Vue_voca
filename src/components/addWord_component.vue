@@ -11,7 +11,7 @@
             </header>
             <section>
                 <div class="box-answer-add">
-                    <input v-model="answer" class="answer answer-add" type="text" placeholder="정답 입력">
+                    <input v-model="answer" v-focus class="answer answer-add" type="text" placeholder="정답 입력">
                     <button v-on:click="isHaveWord">중복검사</button>
                 </div>
                 <div>
@@ -81,6 +81,13 @@
                         })
                 } else {
                     alert('단어를 입력해주세요');
+                }
+            }
+        },
+        directives: {
+            focus: {
+                inserted: function(el) {
+                    el.focus();
                 }
             }
         }

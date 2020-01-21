@@ -44,8 +44,8 @@ public class MainController {
 	
 	@GetMapping("quizList")
 	@ResponseBody
-	public List<Word> quizList() {
-		return wordDao.quizList();
+	public List<Word> quizList(@RequestParam String totalQuizNumber) {
+		return wordDao.quizList(totalQuizNumber);
 	}
 	
 	@GetMapping("/rightWordReader")

@@ -141,6 +141,16 @@ a {
     left: calc(50% + 100px);
 }
 
+.one-btn-box > * {
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    padding: 5px;
+    border: 1px solid #eee;
+    cursor: pointer;
+    transition: all .3s;
+}
+
 .two-btn-box {
     overflow: hidden;
 }
