@@ -176,6 +176,12 @@ a {
     resize: none;
 }
 
+.infinite-scroll-box {
+    height: 300px;
+    box-shadow: 0 0 30px 0 #eee;
+    overflow: auto;
+}
+
 @media (max-width: 1024px) {
     .word-list > li {
         font-size: 35px;

@@ -10,11 +10,12 @@
         </header>
         <div class="word-list-box">
             <div class="toggle-btn-area">
-                <button class="viewer-toggle">Page / scroll</button>
+                <button class="viewer-toggle" v-on:click="changeViewMode">{{ viewMode }}</button>
             </div>
-            <section>
+            <!-- 페이지네이션 -->
+            <section v-show="isPaginationMode">
                 <ul class="word-list">
-                    <li v-for="(value, index) in words" v-bind:key="value.word">
+                    <li v-for="(value, index) in words" v-bind:key="index">
                         <span v-on:click="showWord(value, index)">{{ value.word }}</span>
                     </li>
                 </ul>
@@ -36,6 +37,20 @@
                         </span>
                     </paginate>
                 </nav>
+            </section>
+            <!-- 무한스크롤 -->
+            <section v-show="!isPaginationMode"
+                     class="infinite-scroll-box"
+                     ref="infiniteScrollBox"
+                     v-infinite-scroll="loadMore"
+                     infinite-scroll-disabled="busy"
+                     infinite-scroll-distance="10"
+                     infinite-scroll-immediate-check="true">
+                    <ul class="word-list">
+                        <li v-for="(value, index) in words" v-bind:key="index">
+                            <span v-on:click="showWord(value, index)">{{ value.word }}</span>
+                        </li>
+                    </ul>
             </section>
         </div>
 
@@ -76,6 +91,14 @@
                 viewIndex: -1,
                 isEditMode: false,
                 editDescription: '',
+                busy: false,
+                loadingPageNum: 1,
+                loadingTimeOutKey: -1,
+            }
+        },
+        computed: {
+            viewMode: function() {
+                return this.isPaginationMode ? 'PageMode' : 'ScrollMode';
             }
         },
         created: function() {
@@ -110,6 +133,34 @@
                         alert('단어장(서버)을 불러오는데 실패하였습니다.');
                     })
             },
+            loadMore: function() {
+                this.busy = true;
+                this.loadingTimeOutKey = setTimeout(() => {
+                    if (this.maxPage > this.loadingPageNum) {
+                        this.addWords();
+                        this.busy = false;
+                    } else {
+                        alert('단어를 모두 불러왔습니다.')
+                    }
+                }, 1000);
+            },
+            addWords: function() {
+                if (!this.isPaginationMode) {
+                    let thisComp = this;
+                    axios.get('/getPage', {
+                            params: {
+                                pageNum: ++this.loadingPageNum,
+                                onePageViewCount: this.onePageViewCount
+                            }
+                        })
+                        .then((res)=>{
+                            thisComp.words = thisComp.words.concat(res.data);
+                        })
+                        .catch(()=>{
+                            alert('단어장(서버)을 불러오는데 실패하였습니다.');
+                        })
+                }
+            },
             showWord: function(word, index) {
                 this.viewWord = word.word;
                 this.viewDescription = word.description;
@@ -142,6 +193,14 @@
             editModeOn: function() {
                 this.editDescription = this.viewDescription;
                 this.isEditMode = true;
+            },
+            changeViewMode: function() {
+                this.isPaginationMode = !this.isPaginationMode;
+                clearTimeout(this.loadingTimeOutKey);
+                this.getPage(1);
+                this.loadingPageNum = 1;
+                this.$refs.infiniteScrollBox.scrollTop = 0;
+                this.busy = false;
             }
         },
         components: {
