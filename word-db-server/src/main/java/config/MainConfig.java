@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import controller.MainController;
+import controller.VueVocaController;
 import dao.WordDAO;
 
 @Configuration
@@ -13,6 +14,11 @@ public class MainConfig {
 	@Bean
 	public MainController mainController() {
 		return new MainController();
+	}
+	
+	@Bean
+	public VueVocaController vueVocaController() {
+		return new VueVocaController();
 	}
 	
 	@Bean
