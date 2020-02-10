@@ -78,7 +78,7 @@ Vue.component('paginate', VuejsPaginate);
 			 "	<div>"
 			+"		<header class='header'>"
 			+"			<h1 class='page-title'>{{ pageTitle }}</h1>"
-			+"			<a href='${contextPath}/root'"
+			+"			<a href='${contextPath}/voca/root'"
 			+"			   title='메인화면으로 이동'"
 			+"			   class='go-back-btn'>"
 			+"				<span>Back</span>"
@@ -211,7 +211,7 @@ Vue.component('paginate', VuejsPaginate);
 			+"		<div>"
 			+"			<header class='header'>"
 			+"				<h1 class='page-title'>{{ pageTitle }}</h1>"
-			+"				<a href='${contextPath}/root'"
+			+"				<a href='${contextPath}/voca/root'"
 			+"				   title='메인화면으로 이동'"
 			+"				   class='go-back-btn'>"
 			+"					<span>Back</span>"
@@ -304,16 +304,13 @@ Vue.component('paginate', VuejsPaginate);
 				"<div>"
 				+"	<header class='header'>"
 				+"		<h1 class='page-title'>{{ pageTitle }}</h1>"
-				+"		<a href='${contextPath}/root'"
+				+"		<a href='${contextPath}/voca/root'"
 				+"		   title='메인화면으로 이동'"
 				+"		   class='go-back-btn'>"
 				+"			<span>Back</span>"
 				+"		</a>"
 				+"	</header>"
 				+"	<div class='word-list-box'>"
-				+"		<div class='toggle-btn-area'>"
-				+"			<button class='viewer-toggle' v-on:click='changeViewMode'>{{ viewMode }}</button>"
-				+"		</div>"
 				+"		<!-- 페이지네이션 -->"
 				+"		<section>"
 				+"			<ul class='word-list'>"
@@ -322,7 +319,7 @@ Vue.component('paginate', VuejsPaginate);
 				+"				</li>"
 				+"			</ul>"
 				+"			<nav>"
-				+"				<paginate v-if='isPaginationMode'"
+				+"				<paginate"
 				+"						:page-count='maxPage'"
 				+"						:click-handler='getPage'"
 				+"						:prev-text=\"'Prev'\""
@@ -366,8 +363,7 @@ Vue.component('paginate', VuejsPaginate);
 				return {
 					pageTitle: '단어 목록보기',
 					words: [],
-					onePageViewCount: 5,
-					isPaginationMode: true,
+					onePageViewCount: 10,
 					maxPage: 1,
 					showModal: false,
 					viewWord: '',
@@ -375,14 +371,8 @@ Vue.component('paginate', VuejsPaginate);
 					viewIndex: -1,
 					isEditMode: false,
 					editDescription: '',
-					busy: false,
 					loadingPageNum: 1,
 					loadingTimeOutKey: -1,
-				}
-			},
-			computed: {
-				viewMode: function() {
-					return this.isPaginationMode ? 'PageMode' : 'ScrollMode';
 				}
 			},
 			created: function() {
@@ -417,34 +407,6 @@ Vue.component('paginate', VuejsPaginate);
 							alert('단어장(서버)을 불러오는데 실패하였습니다.');
 						})
 				},
-				loadMore: function() {
-					this.busy = true;
-					this.loadingTimeOutKey = setTimeout(() => {
-						if (this.maxPage > this.loadingPageNum) {
-							this.addWords();
-							this.busy = false;
-						} else {
-							alert('단어를 모두 불러왔습니다.')
-						}
-					}, 1000);
-				},
-				addWords: function() {
-					if (!this.isPaginationMode) {
-						let thisComp = this;
-						axios.get('/getPage', {
-								params: {
-									pageNum: ++this.loadingPageNum,
-									onePageViewCount: this.onePageViewCount
-								}
-							})
-							.then((res)=>{
-								thisComp.words = thisComp.words.concat(res.data);
-							})
-							.catch(()=>{
-								alert('단어장(서버)을 불러오는데 실패하였습니다.');
-							})
-					}
-				},
 				showWord: function(word, index) {
 					this.viewWord = word.word;
 					this.viewDescription = word.description;
@@ -478,14 +440,6 @@ Vue.component('paginate', VuejsPaginate);
 					this.editDescription = this.viewDescription;
 					this.isEditMode = true;
 				},
-				changeViewMode: function() {
-					this.isPaginationMode = !this.isPaginationMode;
-					clearTimeout(this.loadingTimeOutKey);
-					this.getPage(1);
-					this.loadingPageNum = 1;
-					this.$refs.infiniteScrollBox.scrollTop = 0;
-					this.busy = false;
-				}
 			},
 			components: {
 				modal: modal
@@ -505,19 +459,19 @@ Vue.component('paginate', VuejsPaginate);
 		mode: 'history',
 		routes:[
 			{
-				path: '${contextPath}/root',
+				path: '${contextPath}/voca/root',
 				component: root
 			},
 			{
-				path: '${contextPath}/quiz',
+				path: '${contextPath}/voca/quiz',
 				component: quiz
 			},
 			{
-				path: '${contextPath}/addWord',
+				path: '${contextPath}/voca/addWord',
 				component: addWord
 			},
 			{
-				path: '${contextPath}/wordList',
+				path: '${contextPath}/voca/wordList',
 				component: wordList
 			}
 		]

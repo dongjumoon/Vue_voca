@@ -21,7 +21,7 @@ public class VueVocaController {
 	@Autowired
 	WordDAO wordDao;
 	
-	@GetMapping("/root")
+	@GetMapping("/voca/*")
 	public String root(){
     	return "root";
     }
